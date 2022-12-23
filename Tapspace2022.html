@@ -94,12 +94,49 @@ function mouseUp(e) {
   clickTarget = null;
 }
 
+function touchStart(e) {
+  e.preventDefault();
+  if (e.touches.length != 1) return;
+  let x = (e.touches[0].x-scale*.25)/scale;
+  let y = (e.touches[0].y-scale*.25)/scale;
+  letters.forEach((l, i) => {
+    if (x-l.x <1.0 && x-l.x>0.0 &&
+        y-l.y < 1.0 && y-l.y > 0.0) clickTarget = i;
+  });
+  clicked = true;
+
+}
+function touchMove(e)  {
+  e.preventDefault();
+  if (e.touches.length != 1) return;
+  if (clickTarget != null && clickTarget >= 0 && clickTarget < letters.length) {
+    letters[clickTarget].x += e.touches[0].movementX/scale;
+    letters[clickTarget].y += e.touches[0].movementY/scale;
+  }
+  render();
+}
+function touchEnd(e)  {
+  e.preventDefault();
+  if (e.touches.length != 1) return;
+  if (clickTarget != null && clickTarget >= 0 && clickTarget < letters.length) {
+    letters[clickTarget].x = Math.trunc(letters[clickTarget].x+0.5,0);
+    letters[clickTarget].y = Math.trunc(letters[clickTarget].y+0.5,0);
+  }
+  //clear click target
+  clicked = false;
+  clickTarget = null;
+}
+
+
 canvas.addEventListener("mousedown",mouseDown);
 canvas.addEventListener("mousemove",mouseDrag);
 canvas.addEventListener("mouseup",mouseUp);
-canvas.addEventListener("touchstart",mouseDown);
-canvas.addEventListener("touchmove",mouseDrag);
-canvas.addEventListener("touchend",mouseUp);
+
+canvas.addEventListener("touchstart",touchStart);
+canvas.addEventListener("touchmove",touchMove);
+canvas.addEventListener("touchend",touchEnd);
+canvas.addEventListener("touchcancel",touchEnd);
+
 
 //window.setInterval(update,30);
 

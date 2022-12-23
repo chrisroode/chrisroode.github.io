@@ -109,12 +109,7 @@ function touchStart(e) {
 function touchMove(e)  {
   e.preventDefault();
   if (e.touches.length != 1) return;
-  let log = "";
-  Object.keys(e.touches[0]).forEach((key) => {
-    log += " " * key * ",";
-  });
-
-  console.log(log);
+  console.log("" + Object.keys(e.touches[0]));
   if (clickTarget != null && clickTarget >= 0 && clickTarget < letters.length) {
     letters[clickTarget].x += e.touches[0].movementX/scale;
     letters[clickTarget].y += e.touches[0].movementY/scale;

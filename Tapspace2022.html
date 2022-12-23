@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html><!-- This stuff is just setting up a canvas on the HTML document.-->
+<head>
+    <title>Implementation of Distance Mapping</title>
+    <style>
+    </style>
+</head>
+<body bgcolor="black">
+<canvas id="myCanvas"></canvas>
+<script>
+    /*---------------------------------------
+       Drag Drop Blocks
+    -----------------------------------------*/
+
+var letters = [{val:"F",x:0,y:0,c:"rgb(160,160,160)"},{val:"U",x:1,y:0,c:"rgb(160,160,160)"},{val:"N",x:2,y:0,c:"rgb(160,160,160)"},
+               {val:"K",x:3,y:0,c:"rgb(160,160,160)"},{val:"Y",x:4,y:0,c:"rgb(160,160,160)"},
+               {val:"M",x:0,y:1,c:"rgb(160,160,160)"},{val:"U",x:1,y:1,c:"rgb(160,160,160)"},{val:"S",x:2,y:1,c:"rgb(160,160,160)"},
+               {val:"I",x:3,y:1,c:"rgb(160,160,160)"},{val:"C",x:4,y:1,c:"rgb(255,220,128)"},
+               {val:"L",x:0,y:2,c:"rgb(160,160,160)"},{val:"O",x:1,y:2,c:"rgb(160,160,160)"},{val:"C",x:2,y:2,c:"rgb(255,220,128)"},
+               {val:"A",x:3,y:2,c:"rgb(255,220,128)"},{val:"L",x:4,y:2,c:"rgb(160,160,160)"},
+               {val:"C",x:0,y:3,c:"rgb(255,220,128)"},{val:"R",x:1,y:3,c:"rgb(160,160,160)"},{val:"A",x:2,y:3,c:"rgb(128,160,64)"},
+               {val:"S",x:3,y:3,c:"rgb(160,160,160)"},{val:"H",x:4,y:3,c:"rgb(160,160,160)"},
+               {val:"T",x:0,y:4,c:"rgb(160,160,160)"},{val:"E",x:1,y:4,c:"rgb(128,160,64)"},{val:"A",x:2,y:4,c:"rgb(128,160,64)"},
+               {val:"C",x:3,y:4,c:"rgb(128,160,64)"},{val:"H",x:4,y:4,c:"rgb(160,160,160)"},
+               {val:"P",x:0,y:5,c:"rgb(128,160,64)"},{val:"E",x:1,y:5,c:"rgb(128,160,64)"},{val:"A",x:2,y:5,c:"rgb(128,160,64)"},
+               {val:"C",x:3,y:5,c:"rgb(128,160,64)"},{val:"E",x:4,y:5,c:"rgb(128,160,64)"},];
+
+
+
+
+const canvas = document.getElementById('myCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth*0.98;
+canvas.height = window.innerHeight*0.98;
+var scale = canvas.height/8;
+var bigT = 0;
+
+function drawLetter(e) {
+  ctx.save();
+  ctx.fillStyle = e.c
+  ctx.beginPath();
+  ctx.roundRect(e.x*scale+scale*0.25,e.y*scale+scale*0.25,scale-10,scale-10,15);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = "white";
+  ctx.fillText(e.val,e.x*scale+scale*.5,e.y*scale+scale*.95);
+  ctx.restore();
+}
+
+
+function render() {
+  ctx.save();
+  ctx.fillStyle = "rgb(192,220,255)"
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = "rgb(160,160,160)";
+  ctx.strokeStyle = "rgb(128,128,128)";
+  ctx.font = `bold ${scale*0.6}px sans-serif`;
+  ctx.lineWidth = .75;
+  letters.forEach((e) => {
+    drawLetter(e);
+  });
+}
+render();
+
+
+var clicked = false;
+var clickTarget = null;
+
+function mouseDown(e) {
+  //set click target
+  let x = (e.x-scale*.25)/scale;
+  let y = (e.y-scale*.25)/scale;
+  letters.forEach((l, i) => {
+    if (x-l.x <1.0 && x-l.x>0.0 &&
+        y-l.y < 1.0 && y-l.y > 0.0) clickTarget = i;
+  });
+  clicked = true;
+}
+function mouseDrag(e) {
+  //move click target if possible
+  if (clickTarget != null && clickTarget >= 0 && clickTarget < letters.length) {
+    letters[clickTarget].x += e.movementX/scale;
+    letters[clickTarget].y += e.movementY/scale;
+  }
+  render();
+}
+function mouseUp(e) {
+  if (clickTarget != null && clickTarget >= 0 && clickTarget < letters.length) {
+    letters[clickTarget].x = Math.trunc(letters[clickTarget].x+0.5,0);
+    letters[clickTarget].y = Math.trunc(letters[clickTarget].y+0.5,0);
+  }
+  //clear click target
+  clicked = false;
+  clickTarget = null;
+}
+
+canvas.addEventListener("mousedown",mouseDown);
+canvas.addEventListener("mousemove",mouseDrag);
+canvas.addEventListener("mouseup",mouseUp);
+
+//window.setInterval(update,30);
+
+</script>
+</body>
+</html>

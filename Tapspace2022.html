@@ -96,7 +96,6 @@ function mouseUp(e) {
 
 function touchStart(e) {
   e.preventDefault();
-  console.log(e);
   if (e.touches.length != 1) return;
   let x = (e.touches[0].x-scale*.25)/scale;
   let y = (e.touches[0].y-scale*.25)/scale;
@@ -109,8 +108,8 @@ function touchStart(e) {
 }
 function touchMove(e)  {
   e.preventDefault();
-  console.log(e);
   if (e.touches.length != 1) return;
+  console.log(e.touches[0]);
   if (clickTarget != null && clickTarget >= 0 && clickTarget < letters.length) {
     letters[clickTarget].x += e.touches[0].movementX/scale;
     letters[clickTarget].y += e.touches[0].movementY/scale;
@@ -119,7 +118,6 @@ function touchMove(e)  {
 }
 function touchEnd(e)  {
   e.preventDefault();
-  console.log(e);
   if (e.touches.length != 1) return;
   if (clickTarget != null && clickTarget >= 0 && clickTarget < letters.length) {
     letters[clickTarget].x = Math.trunc(letters[clickTarget].x+0.5,0);

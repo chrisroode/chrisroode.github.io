@@ -65,6 +65,8 @@ render();
 
 var clicked = false;
 var clickTarget = null;
+var lastTx = 0;
+var lastTy = 0;
 
 function mouseDown(e) {
   //set click target
@@ -97,11 +99,11 @@ function mouseUp(e) {
 function touchStart(e) {
   e.preventDefault();
   if (e.touches.length != 1) return;
-  let x = (e.touches[0].x-scale*.25)/scale;
-  let y = (e.touches[0].y-scale*.25)/scale;
+  lastTx = (e.touches[0].clientX-scale*.25)/scale;
+  lastTy = (e.touches[0].clientY-scale*.25)/scale;
   letters.forEach((l, i) => {
-    if (x-l.x <1.0 && x-l.x>0.0 &&
-        y-l.y < 1.0 && y-l.y > 0.0) clickTarget = i;
+    if (lastTx-l.x <1.0 && lastTx-l.x>0.0 &&
+        lastTy-l.y < 1.0 && lastTy-l.y > 0.0) clickTarget = i;
   });
   clicked = true;
 
@@ -109,10 +111,13 @@ function touchStart(e) {
 function touchMove(e)  {
   e.preventDefault();
   if (e.touches.length != 1) return;
-  console.log("" + Object.keys(e.touches[0]));
+  let deltaX = (e.touches[0].clientX-scale*.25)/scale - lastTx;
+  let deltaY = (e.touches[0].clientY-scale*.25)/scale - lastTy;
+  lastTx = (e.touches[0].clientX-scale*.25)/scale;
+  lastTy = (e.touches[0].clientY-scale*.25)/scale;
   if (clickTarget != null && clickTarget >= 0 && clickTarget < letters.length) {
-    letters[clickTarget].x += e.touches[0].movementX/scale;
-    letters[clickTarget].y += e.touches[0].movementY/scale;
+    letters[clickTarget].x += deltaX/scale;
+    letters[clickTarget].y += deltaY/scale;
   }
   render();
 }

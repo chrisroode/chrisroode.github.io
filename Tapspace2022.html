@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html><!-- This stuff is just setting up a canvas on the HTML document.-->
 <head>
-    <title>Implementation of Distance Mapping</title>
+    <title>Tapspace 2022 Christmas Card</title>
     <style>
     </style>
 </head>
@@ -32,7 +32,7 @@ const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth*0.98;
 canvas.height = window.innerHeight*0.98;
-var scale = canvas.height/8;
+var scale = Math.min(canvas.height/8,canvas.width/5.5);
 var bigT = 0;
 
 function drawLetter(e) {
@@ -97,6 +97,9 @@ function mouseUp(e) {
 canvas.addEventListener("mousedown",mouseDown);
 canvas.addEventListener("mousemove",mouseDrag);
 canvas.addEventListener("mouseup",mouseUp);
+canvas.addEventListener("touchstart",mouseDown);
+canvas.addEventListener("touchmove",mouseDrag);
+canvas.addEventListener("touchend",mouseUp);
 
 //window.setInterval(update,30);
 

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html><!-- Made by Chris Roode, MIT license-->
+<head>
+    <title>Color Wheel</title>
+    <style>
+body {
+    background-color: #222222;
+    color: #bbbbbb;
+    font-family: "open sans";
+}
+canvas {
+    width:95vh;
+    height:95vh;
+}
+div {
+    border:solid;
+    padding:0.5vh;
+    margin:0.5vh;
+    border-radius:1.5vh;
+}
+p   {
+    padding:0;
+    margin:0;
+}
+    </style>
+</head>
+<body>
+    <table>
+        <tr>
+            <td>
+                <canvas id="myCanvas"/>
+            </td>
+            <td>
+                <div>
+                    <h1>Color Wheel</h1>
+                    <p>A color wheel generator that allows you to define your own CMYK and blends them using multiplication.  Play around with the sliders below, right click and save the canvas image to use the color swatches.</p>
+                </div>
+                <div>
+                    <p>Color One (Magenta)</p>
+                    <p>Red:<input type="range" id="red1" oninput="draw()" min=0 max=255 step=1 value=255 /><span id="txtred1"><span></p>
+                    <p>Green:<input type="range" id="green1" oninput="draw()" min=0 max=255 step=1 value=0 /><span id="txtgreen1"><span></p>
+                    <p>Blue:<input type="range" id="blue1" oninput="draw()" min=0 max=255 step=1 value=180 /><span id="txtblue1"><span></p>
+                    <p>Alpha:<input type="range" id="alpha1" oninput="draw()" min=0 max=1 step=.01 value=0.7 /><span id="txtalpha1"><span></p>
+                </div>
+                <div>
+                    <p>Color Two (Yellow)</p>
+                    <p>Red:<input type="range" id="red2" oninput="draw()" min=0 max=255 step=1 value=255 /><span id="txtred2"><span></p>
+                    <p>Green:<input type="range" id="green2" oninput="draw()" min=0 max=255 step=1 value=208 /><span id="txtgreen2"><span></p>
+                    <p>Blue:<input type="range" id="blue2" oninput="draw()" min=0 max=255 step=1 value=0 /><span id="txtblue2"><span></p>
+                    <p>Alpha:<input type="range" id="alpha2" oninput="draw()" min=0 max=1 step=.01 value=1 /><span id="txtalpha2"><span></p>
+                </div>
+                <div>
+                    <p>Color Three (Cyan)</p>
+                    <p>Red:<input type="range" id="red3" oninput="draw()" min=0 max=255 step=1 value=0 /><span id="txtred3"><span></p>
+                    <p>Green:<input type="range" id="green3" oninput="draw()" min=0 max=255 step=1 value=128 /><span id="txtgreen3"><span></p>
+                    <p>Blue:<input type="range" id="blue3" oninput="draw()" min=0 max=255 step=1 value=255 /><span id="txtblue3"><span></p>
+                    <p>Alpha:<input type="range" id="alpha3" oninput="draw()" min=0 max=1 step=.01 value=0.85 /><span id="txtalpha3"><span></p>
+                </div>
+                <div>
+                    <p>Color Four (Black)</p>
+                    <p>Red:<input type="range" id="red4" oninput="draw()" min=0 max=255 step=1 value=22 /><span id="txtred4"><span></p>
+                    <p>Green:<input type="range" id="green4" oninput="draw()" min=0 max=255 step=1 value=18 /><span id="txtgreen4"><span></p>
+                    <p>Blue:<input type="range" id="blue4" oninput="draw()" min=0 max=255 step=1 value=21 /><span id="txtblue4"><span></p>
+                    <p>Alpha:<input type="range" id="alpha4" oninput="draw()" min=0 max=1 step=.01 value=0.86 /><span id="txtalpha4"><span></p>
+                </div>
+                <div>
+                    <p>Canvas Color</p>
+                    <p>Red:<input type="range" id="red5" oninput="draw()" min=0 max=255 step=1 value=250 /><span id="txtred5"><span></p>
+                    <p>Green:<input type="range" id="green5" oninput="draw()" min=0 max=255 step=1 value=248 /><span id="txtgreen5"><span></p>
+                    <p>Blue:<input type="range" id="blue5" oninput="draw()" min=0 max=255 step=1 value=253 /><span id="txtblue5"><span></p>
+                </div>
+            </td>
+        </tr>
+    </table>
+<script>
+
+const canvas = document.getElementById("myCanvas");
+const ctx = canvas.getContext("2d");
+canvas.width=512;
+canvas.height=512;
+
+function drawCircle(ctx,color,radius) {
+    ctx.save();
+    ctx.fillStyle = `rgba(${color.r},${color.g},${color.b},${color.a})`;
+    ctx.beginPath();
+    ctx.arc(0, 0, radius, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.restore();
+}
+
+function positionCircle(ctx,distance,degrees) {
+    let y = Math.sin((degrees-90)/180*Math.PI)*distance;
+    let x = Math.cos((degrees-90)/180*Math.PI)*distance;
+    ctx.translate(x,y);
+}
+                     
+function mixColor(c1,alpha) {
+    return {
+        r:c1.r,
+        g:c1.g,
+        b:c1.b,
+        a:c1.a*alpha
+    };
+}
+
+function updateText() {
+    document.getElementById("txtred1").innerHTML = document.getElementById("red1").value;
+    document.getElementById("txtred2").innerHTML = document.getElementById("red2").value;
+    document.getElementById("txtred3").innerHTML = document.getElementById("red3").value;
+    document.getElementById("txtred4").innerHTML = document.getElementById("red4").value;
+    document.getElementById("txtred5").innerHTML = document.getElementById("red5").value;
+    document.getElementById("txtgreen2").innerHTML = document.getElementById("green2").value;
+    document.getElementById("txtgreen3").innerHTML = document.getElementById("green3").value;
+    document.getElementById("txtgreen4").innerHTML = document.getElementById("green4").value;
+    document.getElementById("txtgreen5").innerHTML = document.getElementById("green5").value;
+    document.getElementById("txtgreen1").innerHTML = document.getElementById("green1").value;
+    document.getElementById("txtblue1").innerHTML = document.getElementById("blue1").value;
+    document.getElementById("txtblue2").innerHTML = document.getElementById("blue2").value;
+    document.getElementById("txtblue3").innerHTML = document.getElementById("blue3").value;
+    document.getElementById("txtblue4").innerHTML = document.getElementById("blue4").value;
+    document.getElementById("txtblue5").innerHTML = document.getElementById("blue5").value;
+    document.getElementById("txtalpha1").innerHTML = document.getElementById("alpha1").value;
+    document.getElementById("txtalpha2").innerHTML = document.getElementById("alpha2").value;
+    document.getElementById("txtalpha3").innerHTML = document.getElementById("alpha3").value;
+    document.getElementById("txtalpha4").innerHTML = document.getElementById("alpha4").value;
+}
+        
+                     
+                     
+function draw() {
+    updateText();
+    let color1 = {
+        r:document.getElementById("red1").value,
+        g:document.getElementById("green1").value,
+        b:document.getElementById("blue1").value,
+        a:document.getElementById("alpha1").value
+    };
+    let color2 = {
+        r:document.getElementById("red2").value,
+        g:document.getElementById("green2").value,
+        b:document.getElementById("blue2").value,
+        a:document.getElementById("alpha2").value
+    };
+    let color3 = {
+        r:document.getElementById("red3").value,
+        g:document.getElementById("green3").value,
+        b:document.getElementById("blue3").value,
+        a:document.getElementById("alpha3").value
+    };
+    let black = {
+        r:document.getElementById("red4").value,
+        g:document.getElementById("green4").value,
+        b:document.getElementById("blue4").value,
+        a:document.getElementById("alpha4").value
+    };
+    let paper = {
+        r:document.getElementById("red5").value,
+        g:document.getElementById("green5").value,
+        b:document.getElementById("blue5").value,
+        a:1
+    };
+    let steps = 30;
+    let stepSize = 12;
+    
+    //let size = document.getElementById("size").value;
+    let rings = 9;
+    
+    
+    ctx.save();
+    ctx.fillStyle = `rgb(${paper.r}, ${paper.g}, ${paper.b})`;
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.translate(canvas.width/2, canvas.height/2);
+    ctx.globalCompositeOperation = "multiply";
+    
+    let distance = 250;
+    
+    let radii = [23,19,15,12,10,8,6,5,4]
+    
+    
+    
+    for (let h=0; h<rings; h++) {
+        let circleSize = radii[h];
+        distance -= circleSize;
+        let scale4 = h/rings;
+        let alphaScale = (h/rings)
+        for (let i=0; i<steps/3+1;i++) {
+            let rotate = i*stepSize;
+            let scale = i/steps;
+            ctx.save();
+            positionCircle(ctx,distance,rotate+240);
+            drawCircle(ctx,mixColor(color1,1),circleSize);
+            
+            ctx.restore();
+            ctx.save();
+            positionCircle(ctx,distance,rotate);
+            drawCircle(ctx,mixColor(color2,1),circleSize);
+           
+            ctx.restore();
+            ctx.save();
+            positionCircle(ctx,distance,rotate+120);
+            drawCircle(ctx,mixColor(color3,1),circleSize);
+            
+            ctx.restore();
+        }
+        for (let i=1; i<steps/6; i++) {
+            //comment here
+            let rotate = i*stepSize;
+            let blend = 1-i/(steps/6);
+            ctx.save();
+            positionCircle(ctx,distance,rotate);
+            drawCircle(ctx,mixColor(color1,blend),circleSize);
+            
+            ctx.restore();
+             ctx.save();
+             positionCircle(ctx,distance,-rotate+240);
+             drawCircle(ctx,mixColor(color1,blend),circleSize);
+             
+             ctx.restore();
+             ctx.save();
+             positionCircle(ctx,distance,rotate+120);
+             drawCircle(ctx,mixColor(color2,blend),circleSize);
+             
+             ctx.restore();
+              ctx.save();
+              positionCircle(ctx,distance,-rotate);
+              drawCircle(ctx,mixColor(color2,blend),circleSize);
+              
+              ctx.restore();
+             ctx.save();
+             positionCircle(ctx,distance,rotate+240);
+             drawCircle(ctx,mixColor(color3,blend),circleSize);
+            
+             ctx.restore();
+              ctx.save();
+              positionCircle(ctx,distance,-rotate+120);
+              drawCircle(ctx,mixColor(color3,blend),circleSize);
+              
+              ctx.restore();
+            
+        }
+        for (let i=0; i<steps; i++) {
+            ctx.save();
+            positionCircle(ctx,distance,i*stepSize);
+            drawCircle(ctx,mixColor(black,alphaScale),circleSize);
+            ctx.restore();
+        }
+             distance -= circleSize+1;
+    }
+    
+    
+    
+    
+    
+    
+    drawCircle(ctx,black,37);
+    ctx.restore();
+    
+    ctx.restore();
+    
+    //ctx.fillStyle = `rgb(${color3.r},${color3.g},${color3.b})`;
+    //ctx.fillRect(0,0,canvas.width,canvas.height);
+    
+    
+    
+    
+    
+}
+
+draw();
+
+</script>
+</body>
+</html>
